@@ -6,33 +6,41 @@ import MainPrincipal from './components/MainPrincipal.vue';
 import { store } from './data/store';
 import axios from 'axios';
 
-import Cardadata from './components/Card.vue';
-
 export default {
+
     name: 'App',
     components: {
         HeaderYu,
         MainPrincipal,
-        Cardadata,
     },
+
     data() {
         return {
             store 
         };
     },
+
     methods: {
-        // 
-    },  
+
+        GenerateCards() {
+            axios.get(this.store.urlAPI).then(response => {
+                this.store.cards = response.data.data;
+                this.store.loadingCards = false;
+            }).catch(error => {
+                setTimeout(() => {
+                this.store.error = true;
+                this.store.errorMessage = error.message;
+                this.store.loadingCards = false;
+                }, 5000);
+                
+            });
+        },
+
+        
+    }, 
+
     mounted() {
-        axios.get(this.store.urlAPI).then(response => {
-        this.store.cards = response.data.results;
-        this.store.loading = false;
-        })
-        .catch(error => {
-            console.log(' error :( ' + error);
-            this.store.cards = [];
-            this.store.loading = false;
-        }); 
+        this.GenerateCards();
     },   
 }
 </script>
